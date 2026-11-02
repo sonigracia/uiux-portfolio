@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>POEMS Cash Withdrawal</title>
+<meta name="description" content="Case study: redesigning cash withdrawal in the POEMS mobile app, with instant withdrawal and clearer status.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --ground: #E7E8E3;
+    --card: #F6F6F2;
+    --card-2: #FFFFFF;
+    --ink: #1C1F1B;
+    --muted: #6F736C;
+    --line: #D9DAD3;
+    --accent: #2F5BD3;
+    --orange: #E9821C;
+    --plum: #4A3E5C;
+    --plum-ink: #F1ECF7;
+    --major: #C9402F;  --major-bg: #F8E2DE;
+    --medium: #A86A0C; --medium-bg: #F6EAD3;
+    --minor: #4F6A86;  --minor-bg: #E2E9F1;
+    --shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 10px 30px -18px rgba(30,35,25,.35);
+    --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+    --body: "Figtree", "Helvetica Neue", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #111311; --card: #1A1D1A; --card-2: #222622;
+      --ink: #ECEEE8; --muted: #8F948C; --line: #2C302B; --accent: #7C9BFF;
+      --orange: #F59A3C;
+      --major: #FF8A7A;  --major-bg: #3A1F1B;
+      --medium: #F0B65A; --medium-bg: #35290F;
+      --minor: #9DB6D3;  --minor-bg: #1E2833;
+      --shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 10px 30px -18px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #111311; --card: #1A1D1A; --card-2: #222622;
+    --ink: #ECEEE8; --muted: #8F948C; --line: #2C302B; --accent: #7C9BFF;
+    --orange: #F59A3C;
+    --major: #FF8A7A;  --major-bg: #3A1F1B;
+    --medium: #F0B65A; --medium-bg: #35290F;
+    --minor: #9DB6D3;  --minor-bg: #1E2833;
+    --shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 10px 30px -18px rgba(0,0,0,.8);
+  }
+
+  * { box-sizing: border-box; }
+  html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body {
+    margin: 0; padding: 0 16px;
+    background: var(--ground); color: var(--ink);
+    font: 400 17px/1.65 var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+
+  .top {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    max-width: 1080px; margin: 0 auto; padding-block: 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(var(--ground) 70%, transparent);
+  }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    background: var(--card); box-shadow: var(--shadow);
+    padding: 8px 14px 8px 10px; border-radius: 999px; font-size: 14px; font-weight: 500;
+    transition: transform .25s;
+  }
+  .back:hover { transform: translateX(-3px); }
+  .back svg { width: 16px; height: 16px; }
+  .logo { font: 800 26px/1 var(--display); letter-spacing: -.04em; text-decoration: none; }
+  .logo span { color: var(--accent); }
+
+  main { max-width: 1080px; margin: 0 auto; padding-block: 16px 96px; }
+
+  /* Hero */
+  .hero { display: grid; gap: 28px; }
+  .eyebrow { font: 600 12px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  h1 {
+    margin: 12px 0 0; max-width: 18ch;
+    font: 800 clamp(36px, 6vw, 68px)/1 var(--display); letter-spacing: -.04em; text-wrap: balance;
+  }
+  h1 em { font-style: normal; color: var(--orange); }
+  .lede { margin: 0; max-width: 58ch; font-size: clamp(17px, 1.6vw, 20px); color: var(--muted); }
+  .meta {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--line); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow);
+  }
+  .meta div { background: var(--card); padding: 16px 18px; }
+  .meta small { display: block; font: 600 11px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .meta b { font-weight: 600; font-size: 15px; line-height: 1.35; display: block; }
+  .cover { border-radius: 28px; overflow: hidden; box-shadow: var(--shadow); background: var(--plum); }
+  .cover img { width: 100%; aspect-ratio: 2571 / 1068; object-fit: cover; }
+  .cover.video { position: relative; background: #EEF0F3; }
+  .cover video { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .vbtn {
+    position: absolute; right: 16px; bottom: 16px; width: 44px; height: 44px; border: 0; border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer;
+    background: rgba(20,18,28,.72); color: #fff; backdrop-filter: blur(8px);
+    transition: transform .2s;
+  }
+  .vbtn:hover { transform: scale(1.06); }
+  .vbtn svg { width: 18px; height: 18px; }
+
+  /* Sections */
+  section.block { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 32px; padding-block: 64px 0; }
+  section.block > header { position: sticky; top: 90px; align-self: start; }
+  h2 { margin: 8px 0 0; font: 700 clamp(26px, 3vw, 34px)/1.05 var(--display); letter-spacing: -.03em; text-wrap: balance; }
+  h3 { margin: 32px 0 10px; font: 700 20px/1.2 var(--display); letter-spacing: -.02em; }
+  .body > :first-child { margin-top: 0; }
+  .body p, .body li { max-width: 66ch; }
+  .body ul { padding-left: 1.2em; }
+  .body li { margin-bottom: 6px; }
+  .body li::marker { color: var(--orange); }
+
+  figure { margin: 24px 0 0; }
+  .frame { background: var(--card-2); border-radius: 22px; padding: 14px; box-shadow: var(--shadow); overflow-x: auto; }
+  .frame img { border-radius: 12px; }
+  .frame.dark { background: #1D1D21; }
+  .frame.wide img { min-width: 720px; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+  .fact { background: var(--card); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
+  .fact .big { font: 700 clamp(24px, 3vw, 30px)/1.1 var(--display); overflow-wrap: anywhere; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .fact p { margin: 8px 0 0; font-size: 15px; color: var(--muted); }
+  .cutoff { display: flex; align-items: center; gap: 10px; margin-top: 10px; font: 600 12px/1 var(--mono); }
+  .cutoff span { padding: 6px 8px; border-radius: 8px; background: var(--card-2); border: 1px solid var(--line); }
+  .cutoff span.on { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+  .hmw {
+    margin: 28px 0 0; padding: 32px; border-radius: 28px;
+    background: var(--plum); color: var(--plum-ink);
+    font: 600 clamp(20px, 2.4vw, 28px)/1.3 var(--display); letter-spacing: -.02em; text-wrap: balance;
+  }
+  .hmw small { display: block; font: 600 11px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: #C9BEDA; margin-bottom: 14px; }
+
+  .goals { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
+  .goals li { display: flex; gap: 12px; align-items: baseline; background: var(--card); border-radius: 16px; padding: 14px 18px; box-shadow: var(--shadow); max-width: none; }
+  .goals li b { font: 600 13px var(--mono); color: var(--orange); }
+
+  .tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .tools span { font-size: 14px; padding: 6px 12px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow); }
+
+  /* Heuristic table */
+  .sevbar { display: flex; gap: 6px; margin: 20px 0 6px; height: 10px; border-radius: 99px; overflow: hidden; }
+  .sevbar i { display: block; height: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; color: var(--muted); }
+  .legend b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .table { margin-top: 20px; overflow-x: auto; border-radius: 22px; box-shadow: var(--shadow); background: var(--card); }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 15px; }
+  th { text-align: left; font: 600 11px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 16px 18px; border-bottom: 1px solid var(--line); }
+  td { padding: 14px 18px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.5; }
+  tr:last-child td { border-bottom: 0; }
+  td.n { font: 600 13px var(--mono); color: var(--muted); width: 44px; }
+  td.h { font-weight: 600; width: 200px; }
+  td.none { color: var(--muted); }
+  .sev { display: inline-block; font: 600 12px/1 var(--body); padding: 6px 9px; border-radius: 8px; white-space: nowrap; }
+  .sev.major { color: var(--major); background: var(--major-bg); }
+  .sev.medium { color: var(--medium); background: var(--medium-bg); }
+  .sev.minor { color: var(--minor); background: var(--minor-bg); }
+
+  .bench { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; align-items: start; margin-top: 20px; }
+  .bench figure { margin: 0; }
+  .bench .frame { padding: 10px; }
+
+  .num { list-style: none; padding: 0; counter-reset: n; display: grid; gap: 12px; margin-top: 16px; }
+  .num li { counter-increment: n; display: grid; grid-template-columns: 32px 1fr; gap: 12px; max-width: none; }
+  .num li::before { content: counter(n); font: 600 13px/32px var(--mono); text-align: center; width: 32px; height: 32px; border-radius: 10px; background: var(--card); box-shadow: var(--shadow); }
+
+  /* Screens */
+  .screens { display: grid; gap: 20px; margin-top: 8px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .screen {
+    background: var(--card); border-radius: 28px; padding: 28px 24px 24px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .screen .ph {
+    border-radius: 22px; padding: 18px 0;
+    background: radial-gradient(90% 70% at 50% 30%, color-mix(in srgb, var(--plum) 55%, transparent), transparent 70%);
+    display: grid; place-items: center;
+  }
+  .screen img { width: min(260px, 100%); filter: drop-shadow(0 24px 30px rgba(20,10,40,.35)); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  .screen:hover img { transform: translateY(-6px); }
+  .screen .step { font: 600 12px var(--mono); color: var(--orange); }
+  .screen h4 { margin: 4px 0 6px; font: 700 19px/1.2 var(--display); letter-spacing: -.02em; }
+  .screen p { margin: 0; font-size: 15px; color: var(--muted); }
+  .fixes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .fixes span { font: 500 12px/1 var(--body); padding: 6px 8px; border-radius: 8px; background: var(--card-2); border: 1px solid var(--line); color: var(--muted); }
+
+  .callout { margin-top: 20px; padding: 20px 22px; border-radius: 20px; background: var(--card); box-shadow: var(--shadow); border-left: 0; }
+  .callout b { display: block; margin-bottom: 4px; }
+
+  .next {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    margin-top: 80px; padding: 28px 32px; border-radius: 28px; background: var(--card); box-shadow: var(--shadow);
+    text-decoration: none; transition: transform .3s;
+  }
+  .next:hover { transform: translateY(-4px); }
+  .next b { font: 700 clamp(22px, 3vw, 30px)/1.1 var(--display); letter-spacing: -.03em; }
+  .next .arrow { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--ground); }
+
+  @media (max-width: 860px) {
+    section.block { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-block: 48px 0; }
+    section.block > header { position: static; }
+    .meta { grid-template-columns: 1fr 1fr; }
+    .bench { grid-template-columns: 1fr 1fr; }
+    .bench figure:first-child { grid-column: span 2; }
+  }
+  @media (max-width: 560px) {
+    .pair, .facts { grid-template-columns: minmax(0, 1fr); }
+    .hmw { padding: 24px; }
+    table { min-width: 540px; font-size: 14px; }
+    td.h { width: 130px; } td, th { padding-inline: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="back" href="index.html">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+    All work
+  </a>
+  <a class="logo" href="index.html" aria-label="Soni Gracia, home">sg<span>.</span></a>
+</header>
+
+<main>
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Case study · POEMS Mobile</span>
+      <h1>Cash withdrawal you can <em>trust the timing of</em></h1>
+    </div>
+    <p class="lede">Redesigning how POEMS users move money from their investment account (RDI) to their bank, adding instant withdrawal and making every step's status clear.</p>
+    <div class="meta">
+      <div><small>Category</small><b>Mobile Design</b></div>
+      <div><small>My role</small><b>UI Design</b></div>
+      <div><small>Timeline</small><b>2 weeks design, plus dev handoff support</b></div>
+      <div><small>Method</small><b>Nielsen Norman heuristic audit</b></div>
+    </div>
+    <div class="cover video">
+      <video id="hero-video" src="cw-hero.mp4" poster="cw-hero-poster.jpg" muted loop playsinline preload="metadata" aria-label="Walkthrough of the redesigned POEMS cash withdrawal screens"></video>
+      <button class="vbtn" id="hero-toggle" type="button" aria-label="Pause video"></button>
+    </div>
+  </div>
+
+  <!-- Overview -->
+  <section class="block" id="overview">
+    <header><span class="eyebrow">01 · Overview</span><h2>Where the money goes</h2></header>
+    <div class="body">
+      <p>Cash withdrawal lets a user move funds from their RDI (investment account) to their personal bank account. Before the redesign, when the money arrived depended on what time the request was made.</p>
+      <div class="facts">
+        <div class="fact">
+          <div class="big">&lt; Rp10,000,000</div>
+          <p>The size of most withdrawal requests. These are small, low-risk transactions.</p>
+        </div>
+        <div class="fact">
+          <div class="big">10:00 WIB</div>
+          <p>The cutoff. Requests before it settle the same day. Requests after it settle the next day or the day after.</p>
+          <div class="cutoff" aria-hidden="true"><span class="on">T+0</span><span>T+1</span><span>T+2</span></div>
+        </div>
+      </div>
+      <figure>
+        <div class="frame wide"><img src="cw-current-flow.jpg" alt="Flowchart of the existing withdrawal process, branching on request time and whether the RDI and personal bank account are at the same bank"></div>
+        <figcaption>The existing process: settlement depends on request time and on whether the RDI and personal account are at the same bank.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="block" id="problem">
+    <header><span class="eyebrow">02 · Problem</span><h2>Users couldn't tell when their money would arrive</h2></header>
+    <div class="body">
+      <blockquote class="hmw">
+        <small>How might we</small>
+        Help users withdraw cash with full confidence in when it will arrive and what it will cost, while introducing a faster settlement option with minimal decision friction?
+      </blockquote>
+      <h3>Goals</h3>
+      <ul class="goals">
+        <li><b>G1</b>Make same-day and instant cash withdrawal possible.</li>
+        <li><b>G2</b>Give the withdrawal screens clear information about each request's status.</li>
+      </ul>
+      <h3>Tools</h3>
+      <div class="tools"><span>Figma: design drafts</span><span>Figma Make: interactive prototype</span><span>ChatGPT &amp; Claude: design review and UX writing</span></div>
+    </div>
+  </section>
+
+  <!-- Discovery -->
+  <section class="block" id="discovery">
+    <header><span class="eyebrow">03 · Discovery</span><h2>Auditing the old flow</h2></header>
+    <div class="body">
+      <p>I walked through the existing seven-screen flow, from the account menu to withdrawal history.</p>
+      <figure>
+        <div class="frame dark wide"><img src="cw-old-flow.jpg" alt="Seven screenshots of the old POEMS cash withdrawal flow"></div>
+        <figcaption>The old cash withdrawal flow.</figcaption>
+      </figure>
+
+      <h3>Heuristic evaluation</h3>
+      <p>I scored the flow against Nielsen Norman's 10 usability heuristics. It turned up 12 issues across 8 of them.</p>
+      <div class="sevbar" aria-hidden="true">
+        <i style="flex:5;background:var(--major)"></i><i style="flex:5;background:var(--medium)"></i><i style="flex:2;background:var(--minor)"></i>
+      </div>
+      <div class="legend"><span><b>5</b> major</span><span><b>5</b> medium</span><span><b>2</b> minor</span></div>
+
+      <div class="table">
+        <table>
+          <thead><tr><th>#</th><th>Heuristic</th><th>Finding</th><th>Severity</th></tr></thead>
+          <tbody>
+            <tr><td class="n" rowspan="3">1</td><td class="h" rowspan="3">Visibility of system status</td><td>"Effective Date (Est.)" shows "Not Available" before an amount is entered.</td><td><span class="sev major">Major</span></td></tr>
+            <tr><td>No step or progress indicator, so users can't tell how many steps remain.</td><td><span class="sev medium">Medium</span></td></tr>
+            <tr><td>The submit button is active before any amount is entered. It should stay disabled until there is an amount.</td><td><span class="sev major">Major</span></td></tr>
+            <tr><td class="n">2</td><td class="h">Match between system &amp; real world</td><td class="none" colspan="2">No issues found</td></tr>
+            <tr><td class="n">3</td><td class="h">User control &amp; freedom</td><td>The confirmation screen offers "NO" and "YES", but it's unclear whether "NO" returns to an editable form.</td><td><span class="sev major">Major</span></td></tr>
+            <tr><td class="n" rowspan="3">4</td><td class="h" rowspan="3">Consistency &amp; standards</td><td>The four "Withdrawal Amount" rows are clickable quick-select buttons, but they look like plain white text.</td><td><span class="sev minor">Minor</span></td></tr>
+            <tr><td>"No" and "Yes" are uncommon button labels. Financial apps usually use "Cancel" and "Confirm".</td><td><span class="sev medium">Medium</span></td></tr>
+            <tr><td>The amount on the confirmation page is red, which the design system reserves for warnings and losses.</td><td><span class="sev minor">Minor</span></td></tr>
+            <tr><td class="n">5</td><td class="h">Error prevention</td><td>Users can enter more than the withdrawable amount and still press the button. The warning only appears afterwards.</td><td><span class="sev major">Major</span></td></tr>
+            <tr><td class="n">6</td><td class="h">Recognition rather than recall</td><td>Trading equity and portfolio values sit below the input, so the numeric keypad covers them.</td><td><span class="sev medium">Medium</span></td></tr>
+            <tr><td class="n">7</td><td class="h">Flexibility &amp; efficiency</td><td>No instant warning. Users have to take an extra action before an alert appears.</td><td><span class="sev major">Major</span></td></tr>
+            <tr><td class="n">8</td><td class="h">Aesthetic &amp; minimalist design</td><td class="none" colspan="2">No issues found</td></tr>
+            <tr><td class="n">9</td><td class="h">Recognize, diagnose &amp; recover from errors</td><td>The empty state says there's no history but not what to do. History is filtered by month, so a request made on the last day of a month disappears on the 1st.</td><td><span class="sev medium">Medium</span></td></tr>
+            <tr><td class="n">10</td><td class="h">Help &amp; documentation</td><td>No info icons to explain the terms used on the withdrawal pages.</td><td><span class="sev medium">Medium</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Benchmarking</h3>
+      <p>Before designing, I compared how other investment and banking apps handle withdrawals.</p>
+      <div class="bench">
+        <figure><div class="frame dark"><img src="cw-bench-a.jpg" alt="Competitor withdrawal screens in dark mode"></div><figcaption>App A</figcaption></figure>
+        <figure><div class="frame"><img src="cw-bench-b.jpg" alt="Competitor withdrawal form with quick amount buttons"></div><figcaption>App B</figcaption></figure>
+        <figure><div class="frame"><img src="cw-bench-c.jpg" alt="Competitor RDI withdrawal form"></div><figcaption>App C</figcaption></figure>
+      </div>
+      <h3>What POEMS could improve</h3>
+      <ol class="num">
+        <li><span>Competitors give instant feedback when the amount is wrong. POEMS only showed an alert after the user pressed the button.</span></li>
+        <li><span>POEMS already had quick buttons to withdraw everything, or the T+1 or T+2 amounts, but they went unnoticed in plain white text.</span></li>
+      </ol>
+      <h3>Constraints</h3>
+      <ul>
+        <li>Keep the existing account and transaction data model, so no backend rework.</li>
+        <li>Keep color reserved for clickable components.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Solution -->
+  <section class="block" id="solution">
+    <header><span class="eyebrow">04 · New interfaces</span><h2>The redesigned flow</h2></header>
+    <div class="body screens">
+      <div class="pair">
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-1.png" alt="Withdrawal home with an empty history and a tooltip announcing Instant Cash Withdrawal" loading="lazy"></div>
+          <div><span class="step">Step 1 · Home</span><h4>Announce instant withdrawal</h4><p>A tooltip tells users Instant Cash Withdrawal is now available, so they discover it without hunting.</p></div>
+        </article>
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-2.png" alt="Withdrawal form with balance by settlement date and an amount field showing the minimum" loading="lazy"></div>
+          <div><span class="step">Step 2 · Form</span><h4>Enter an amount</h4><p>The text field states the minimum withdrawal amount up front.</p>
+          <div class="fixes"><span>Fixes #10</span></div></div>
+        </article>
+      </div>
+      <div class="pair">
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-3.png" alt="Balance information rows that act as quick buttons for each settlement date" loading="lazy"></div>
+          <div><span class="step">Step 2 · Quick select</span><h4>Tap a balance to fill the amount</h4><p>Each balance row (Instant, T+0, T+1, T+2) is now a visible button that fills in the amount.</p>
+          <div class="fixes"><span>Fixes #4</span><span>Fixes #6</span></div></div>
+        </article>
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-4.png" alt="Amount field showing an inline error and a disabled submit button" loading="lazy"></div>
+          <div><span class="step">Step 2 · Validation</span><h4>Catch errors as you type</h4><p>An inline error message and a disabled button stop users from submitting an invalid amount.</p>
+          <div class="fixes"><span>Fixes #1</span><span>Fixes #5</span><span>Fixes #7</span></div></div>
+        </article>
+      </div>
+      <div class="pair">
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-5.png" alt="Withdrawal confirmation sheet listing amount, bank charges, effective date and accounts" loading="lazy"></div>
+          <div><span class="step">Step 3 · Confirm</span><h4>Review before sending</h4><p>After choosing the amount and destination account (for users with more than one), a confirmation sheet shows the amount, bank charges, effective date and both accounts.</p>
+          <div class="fixes"><span>Fixes #3</span><span>Fixes #4</span></div></div>
+        </article>
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-6.png" alt="Request Submitted sheet with a check mark" loading="lazy"></div>
+          <div><span class="step">Step 4 · Submitted</span><h4>Confirm the request was received</h4><p>A clear success state, with a note that a notification will follow when the transfer completes.</p></div>
+        </article>
+      </div>
+      <div class="pair">
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-7.png" alt="Withdrawal history listing requests with Verified and Transferred status badges" loading="lazy"></div>
+          <div><span class="step">Step 5 · History</span><h4>See every request's status</h4><p>History shows each withdrawal with its status, to cut questions to customer service about where money is.</p>
+          <div class="fixes"><span>Fixes #9</span></div></div>
+        </article>
+        <article class="screen">
+          <div class="ph"><img src="cw-screen-8.png" alt="Withdrawal detail with a Received, Verified, Transferred timeline" loading="lazy"></div>
+          <div><span class="step">Step 5 · Detail</span><h4>Track progress step by step</h4><p>A Received, Verified, Transferred timeline lets users check progress themselves instead of contacting customer service.</p>
+          <div class="fixes"><span>Fixes #1</span></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact -->
+  <section class="block" id="impact">
+    <header><span class="eyebrow">05 · Impact</span><h2>What we know so far</h2></header>
+    <div class="body">
+      <p>No formal usability metrics were collected after launch. The signal so far is that no complaints about cash withdrawal have been reported since launch, from users or from internal stakeholders.</p>
+      <div class="callout"><b>A quiet inbox isn't proof.</b>No complaints doesn't confirm the new flow is fully effective. It still needs proper validation.</div>
+    </div>
+  </section>
+
+  <!-- Reflection -->
+  <section class="block" id="reflection">
+    <header><span class="eyebrow">06 · Reflection</span><h2>What I'd do differently</h2></header>
+    <div class="body">
+      <h3>Visual consistency</h3>
+      <p>The dark purple theme fixed the immediate usability problems, but it drifted from the rest of the app and reads like a different product mid-flow. Next time I'd raise it as a design system conversation before shipping a locally optimized screen, even on a tight timeline, so it doesn't have to be retrofitted later.</p>
+      <h3>Research documentation</h3>
+      <p>I'd document the specific competitor screens and patterns I referenced during ideation, along with the user flow sketches I usually do on paper.</p>
+      <h3>Next steps</h3>
+      <p>Run in-depth research on the revamp's impact, and add metrics that show how well it helps users.</p>
+    </div>
+  </section>
+
+  <a class="next" href="autosweep.html">
+    <div><span class="eyebrow">Next case study</span><br><b>POEMS Autosweep</b></div>
+    <span class="arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+  </a>
+</main>
+
+<script>
+  (() => {
+    const v = document.getElementById('hero-video'), b = document.getElementById('hero-toggle');
+    const icons = {
+      pause: '<svg viewBox="0 0 16 16" fill="currentColor"><rect x="3.5" y="2.5" width="3" height="11" rx="1"/><rect x="9.5" y="2.5" width="3" height="11" rx="1"/></svg>',
+      play: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2.8v10.4a.8.8 0 0 0 1.2.7l8.3-5.2a.8.8 0 0 0 0-1.4L5.7 2.1a.8.8 0 0 0-1.2.7z"/></svg>'
+    };
+    const paint = () => { const playing = !v.paused; b.innerHTML = playing ? icons.pause : icons.play; b.setAttribute('aria-label', playing ? 'Pause video' : 'Play video'); };
+    v.addEventListener('play', paint); v.addEventListener('pause', paint);
+    b.addEventListener('click', () => { v.paused ? v.play().catch(() => {}) : v.pause(); });
+    paint();
+    // Autoplay (muted) unless the visitor prefers reduced motion
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) v.play().catch(paint);
+  })();
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+</script>
+</body>
+</html>
