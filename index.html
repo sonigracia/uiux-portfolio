@@ -150,8 +150,8 @@
   }
   .card:hover { transform: translateY(-4px) scale(1.01); }
   .grid > [hidden] { display: none !important; }
-  /* Home tab: Email/LinkedIn, Skills and Tools widen to fill the gaps left by hidden cards */
-  .grid[data-filter="home"] :is(.stack, .skills, .toolcard) { grid-column: span 2; grid-row: auto; }
+  /* Home tab: Skills and Tools widen to fill the gaps left by hidden cards */
+  .grid[data-filter="home"] :is(.skills, .toolcard) { grid-column: span 2; grid-row: auto; }
   .grid[data-filter="home"] .toolist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .w2 { grid-column: span 2; }
   .h2 { grid-row: span 2; }
@@ -172,12 +172,12 @@
   .avatar {
     flex: none; width: 132px; aspect-ratio: 1; max-width: 40%; border-radius: 50%;
     display: grid; place-items: center; position: relative;
-    background: conic-gradient(from 210deg, var(--accent), var(--up), #F2B33D, var(--clay), var(--accent));
+    background: var(--card-2);
   }
-  .avatar::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--card); }
+  .avatar::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--card); }
   .avatar b { position: relative; z-index: 1; font: 800 46px/1 var(--display); letter-spacing: -.05em; }
   .avatar { transform-style: preserve-3d; will-change: transform; }
-  .avatar img { position: absolute; inset: 5px; z-index: 2; width: calc(100% - 10px); height: calc(100% - 10px); max-width: none; border-radius: 50%; object-fit: cover; }
+  .avatar img { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; max-width: none; border-radius: 50%; object-fit: cover; }
   .intro { perspective: 700px; cursor: default; }
   .intro p { margin: 0; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.55; text-wrap: pretty; }
   .intro p .wave { display: inline-block; transform-origin: 70% 80%; animation: wave 2.4s ease-in-out 1s infinite; }
@@ -199,8 +199,6 @@
     transition: transform .35s cubic-bezier(.2,.8,.2,1);
   }
   .mini:hover { transform: translateY(-3px); }
-  .mini svg { flex: none; width: 34px; height: 34px; transition: transform .4s cubic-bezier(.3,1.5,.5,1); }
-  .mini:hover svg { transform: scale(1.1) rotate(-4deg); }
   .mini span { min-width: 0; display: grid; gap: 2px; }
   .mini b { font: 600 15px/1.2 var(--body); }
   .mini small { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -209,10 +207,10 @@
 
   /* About cards */
   .about-card { padding: 24px 26px; display: flex; flex-direction: column; gap: 14px; }
-  .profile p { margin: 0; font: 500 clamp(17px, 1.75vw, 23px)/1.42 var(--display); letter-spacing: -.01em; text-wrap: pretty; }
+  .profile p { margin: 0; font: 500 clamp(16px, 1.45vw, 19px)/1.45 var(--display); letter-spacing: -.01em; text-wrap: pretty; }
   .profile p em { font-style: normal; color: var(--accent); }
   .profile .yrs { margin-top: auto; display: flex; align-items: baseline; gap: 10px; }
-  .profile .yrs b { font: 800 clamp(40px, 5vw, 60px)/1 var(--display); letter-spacing: -.04em; }
+  .profile .yrs b { font: 800 clamp(36px, 4vw, 48px)/1 var(--display); letter-spacing: -.04em; }
   .profile .yrs span { font-size: 13px; color: var(--muted); line-height: 1.3; white-space: nowrap; }
 
   .timeline { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 0; flex: 1; align-content: space-between; }
@@ -225,7 +223,7 @@
   .timeline time { grid-column: 2; grid-row: 1; font: 500 12px/1.6 var(--mono); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .timeline li.current time { color: var(--up); }
 
-  .edu { justify-content: space-between; }
+  .edu { justify-content: center; }
   .edu h3 { margin: 0; font: 700 clamp(18px, 2vw, 24px)/1.15 var(--display); letter-spacing: -.02em; text-wrap: balance; }
   .edu .row2 { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 15px; }
   .edu time { font: 500 13px var(--mono); }
@@ -236,10 +234,18 @@
 
   .toolist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .toolist li { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 500; }
-  .toolist i { flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font: 700 12px/1 var(--display); font-style: normal; color: #fff; }
+  /* Platform logos sit on white tiles so they read the same on every card color */
+  .brand { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .06); }
+  .brand svg { width: 18px; height: 18px; }
+  .mini .brand { width: 40px; height: 40px; border-radius: 11px; transition: transform .4s cubic-bezier(.3,1.5,.5,1); }
+  .mini .brand svg { width: 24px; height: 24px; }
+  .mini:hover .brand { transform: scale(1.1) rotate(-4deg); }
+  .brand-label { display: inline-flex; align-items: center; gap: 8px; }
+  .brand-label .brand { width: 24px; height: 24px; border-radius: 7px; }
+  .brand-label .brand svg { width: 15px; height: 15px; }
 
-  .lang { justify-content: space-between; }
-  .lang dl { margin: auto 0; display: grid; gap: 14px; }   /* centered in the space below the label */
+  .lang { justify-content: center; }
+  .lang dl { margin: 0; display: grid; gap: 12px; }
   .lang dt { font: 700 17px/1.2 var(--display); letter-spacing: -.01em; }
   .lang dd { margin: 0; font-size: 13px; color: var(--muted); }
 
@@ -253,7 +259,7 @@
   /* Map */
   .map canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   .map .pin {
-    position: absolute; left: 54%; top: 44%; width: 16px; height: 16px; border-radius: 50%;
+    position: absolute; left: 60%; top: 24%; width: 16px; height: 16px; border-radius: 50%;   /* stays clear of the clock on short cards */
     background: var(--accent); border: 3px solid var(--card-2); box-shadow: 0 0 0 0 var(--accent);
     animation: ping 2.2s infinite;
   }
@@ -294,6 +300,12 @@
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .upwork { --upw: #3CCB4A; } }
   :root[data-theme="dark"] .upwork { --upw: #3CCB4A; }
 
+  /* Medium (side quest) */
+  .medium { padding: 22px 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; color: inherit; text-decoration: none; }
+  .medium b { display: block; font: 800 clamp(22px, 2.2vw, 28px)/1.1 var(--display); letter-spacing: -.03em; }
+  .medium small { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
+  .medium .corner { background: var(--ink); color: var(--card); }
+
   /* Now / footer */
   .now { padding: 24px 28px; display: flex; flex-direction: column; gap: 14px; }
   .now ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
@@ -305,8 +317,8 @@
   /* ---------- Colorful mode: vibrant cards on cream, drifting color wash behind ---------- */
   :root[data-theme="colorful"] {
     color-scheme: light;
-    --ground: #FBF0DC;
-    --card: #FFF6E6;
+    --ground: #FBF3E6;
+    --card: #FFF8EC;
     --card-2: #FFFFFF;
     --ink: #3D0B0B;
     --muted: #7A5A50;
@@ -352,24 +364,41 @@
   :root[data-theme="colorful"] :is(.card:not(.project), .mini) { color: var(--ink); }
 
   /* Each card gets its own swatch; light text on the deep ones */
-  :root[data-theme="colorful"] :is(#mail, .profile, .toolcard, .now) {
-    --ink: #FFF6E6; --muted: rgb(255 246 230 / .72); --line: rgb(255 246 230 / .22); --card-2: #FFF6E6;
+  :root[data-theme="colorful"] :is(#mail, .intro, .profile, .toolcard, .now) {
+    --ink: #FFF8EC; --muted: rgb(255 248 236 / .78); --line: rgb(255 248 236 / .24); --card-2: #FFF8EC;
   }
-  :root[data-theme="colorful"] :is(.intro, .mini[href*="linkedin"], .map, .edu, .lang, .exp, .skills, .upwork) {
-    --muted: rgb(61 11 11 / .7); --line: rgb(61 11 11 / .16); --card-2: #FFF6E6; --accent: #3D0B0B;
+  :root[data-theme="colorful"] :is(.mini[href*="linkedin"], .map, .upwork, .medium) {
+    --ink: #2A0F12; --muted: rgb(42 15 18 / .7); --line: rgb(42 15 18 / .16); --card-2: #FFF8EC;
   }
-  :root[data-theme="colorful"] .intro { --card: #FFC12E; }
-  :root[data-theme="colorful"] #mail { --card: #1F5FE0; --accent: #FF5B1F; }
-  :root[data-theme="colorful"] .mini[href*="linkedin"] { --card: #F7A6CF; }
-  :root[data-theme="colorful"] .map { --card: #C9E62A; --accent: #1F5FE0; --line: rgb(61 11 11 / .22); }
-  :root[data-theme="colorful"] .profile { --card: #4D0B0B; --accent: #FFC12E; }
-  :root[data-theme="colorful"] .edu { --card: #FF5B1F; --muted: rgb(43 6 6 / .75); --ink: #2B0606; }
-  :root[data-theme="colorful"] .lang { --card: #C9A2F2; }
-  :root[data-theme="colorful"] .exp { --card: #D8C9BD; }
-  :root[data-theme="colorful"] .skills { --card: #FFC12E; }
-  :root[data-theme="colorful"] .toolcard { --card: #4A2632; }
-  :root[data-theme="colorful"] .upwork { --card: #C9E62A; --upw: #1F6B00; }
-  :root[data-theme="colorful"] .now { --card: #1F5FE0; }
+  :root[data-theme="colorful"] .intro    { --card: #2E6B3F; --blob: #4F9A4C; --blob2: #24583A; --accent: #FFD21F; }
+  :root[data-theme="colorful"] #mail     { --card: #2F7BF0; --accent: #FFFFFF; background: linear-gradient(135deg, #3A86F5, #2161D8); }
+  :root[data-theme="colorful"] .mini[href*="linkedin"] { --card: #F8B8D6; }
+  :root[data-theme="colorful"] .map      { --card: #CBE26E; --accent: #2A0F12; --line: rgb(42 15 18 / .2); }
+  :root[data-theme="colorful"] .profile  { --card: #6E1622; --blob: #85202E; --blob2: #5A101B; --accent: #FFD21F; }
+  :root[data-theme="colorful"] .edu      { --card: #FF9B5E; --blob: #FF7A3D; --blob2: #FFB27E; --ink: #4A0E0E; --muted: rgb(74 14 14 / .78); --line: rgb(74 14 14 / .18); --label: #C2361B; }
+  :root[data-theme="colorful"] .lang     { --card: #DDCAF7; --blob: #A97DEB; --blob2: #CDB3F3; --ink: #24163F; --muted: rgb(36 22 63 / .72); --line: rgb(36 22 63 / .16); --label: #3A2A5C; }
+  :root[data-theme="colorful"] .exp      { --card: #D3E5FB; --blob: #9DC4F6; --blob2: #BCD7F8; --ink: #13245A; --muted: rgb(19 36 90 / .72); --line: rgb(31 95 196 / .45); --up: #1F5FC4; --label: #13245A; }
+  :root[data-theme="colorful"] .exp .timeline li::before { border-color: #1F5FC4; }
+  :root[data-theme="colorful"] .exp .timeline time { color: #1F5FC4; }
+  :root[data-theme="colorful"] .skills   { --card: #FFD45E; --blob: #FFC02E; --blob2: #FFE08A; --ink: #3D1F0B; --muted: rgb(61 31 11 / .7); --line: rgb(61 31 11 / .25); --accent: #3D1F0B; --card-2: #FFF8EC; --label: #D2461E; }
+  :root[data-theme="colorful"] .toolcard { --card: #1F4A35; --blob: #2E6B47; --blob2: #183D2B; }
+  :root[data-theme="colorful"] .upwork   { --card: #CBE26E; --blob: #AFD14E; --blob2: #DCEB97; --upw: #1F6B00; }
+  :root[data-theme="colorful"] .now      { --card: #2F7BF0; --blob: #5C98F5; --blob2: #2468DA; }
+  :root[data-theme="colorful"] .medium   { --card: #F8B8D6; --blob: #F293C1; --blob2: #FBCDE2; }
+
+  /* Soft organic shapes in the corners, a shade off each card's color */
+  :root[data-theme="colorful"] .card:is(.intro, .profile, .edu, .lang, .exp, .skills, .toolcard, .upwork, .now, .medium) {
+    background:
+      radial-gradient(130px 150px at 104% 108%, var(--blob) 97%, transparent 100%),
+      radial-gradient(90px 70px at 88% -6%, var(--blob2) 97%, transparent 100%),
+      radial-gradient(220px 200px at 112% 70%, color-mix(in srgb, var(--blob) 45%, var(--card)) 97%, transparent 100%),
+      var(--card);
+  }
+  /* Section labels pick up a short rule, like a heading underline */
+  :root[data-theme="colorful"] .about-card > .label,
+  :root[data-theme="colorful"] :is(.skills, .toolcard, .now) > .label { color: var(--label, var(--muted)); display: flex; align-items: center; gap: 14px; }
+  :root[data-theme="colorful"] .about-card > .label::after,
+  :root[data-theme="colorful"] :is(.skills, .toolcard, .now) > .label::after { content: ""; width: 72px; height: 1.5px; background: currentColor; opacity: .6; }
 
   /* ---------- Responsive ---------- */
   @media (max-width: 860px) {
@@ -378,7 +407,8 @@
     .grid { --cell: calc((100vw - 32px - 14px) / 2); --gap: 14px; grid-template-columns: repeat(2, 1fr); max-width: none; }
     .about-card { padding: 18px; }
     .mini { padding: 0 12px; gap: 10px; }
-    .mini svg { width: 28px; height: 28px; }
+    .mini .brand { width: 34px; height: 34px; border-radius: 10px; }
+    .mini .brand svg { width: 20px; height: 20px; }
     .w2, .intro, .now { grid-column: span 2; }
     .upwork h3 { display: block; }
     .intro { flex-direction: column; text-align: center; justify-content: center; padding: 22px; gap: 16px; }
@@ -434,7 +464,7 @@
 
     <!-- ABOUT: intro -->
     <article class="card w2 intro" data-cat="about" data-home>
-      <div class="avatar" id="avatar"><b>SG</b><img id="avatar-img" alt="" hidden></div>
+      <div class="avatar" id="avatar"><img id="avatar-img" src="about-avatar-illustration.jpg" alt="Illustrated portrait of Soni Gracia"></div>
       <p>Heyyy <span class="wave">👋</span><br>
         I'm <strong>Soni Gracia</strong>, a UI/UX Designer
         @ Phillip Sekuritas Indonesia.</p>
@@ -444,25 +474,17 @@
     <div class="card stack" data-cat="about" data-home>
       <button class="mini" id="mail" aria-label="Copy email address soni.gracia97@gmail.com">
         <span class="toast" id="toast">Copied</span>
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <rect x="6" y="14" width="52" height="38" rx="8" fill="var(--card-2)" stroke="var(--ink)" stroke-width="3.5"/>
-          <path d="M10 20l22 16 22-16" fill="none" stroke="var(--accent)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <i class="brand"><svg aria-hidden="true" viewBox="0 0 256 193"><path fill="#4285f4" d="M58.182 192.05V93.14L27.507 65.077L0 49.504v125.091c0 9.658 7.825 17.455 17.455 17.455z"/><path fill="#34a853" d="M197.818 192.05h40.727c9.659 0 17.455-7.826 17.455-17.455V49.505l-31.156 17.837l-27.026 25.798z"/><path fill="#ea4335" d="m58.182 93.14l-4.174-38.647l4.174-36.989L128 69.868l69.818-52.364l4.669 34.992l-4.669 40.644L128 145.504z"/><path fill="#fbbc04" d="M197.818 17.504V93.14L256 49.504V26.231c0-21.585-24.64-33.89-41.89-20.945z"/><path fill="#c5221f" d="m0 49.504l26.759 20.07L58.182 93.14V17.504L41.89 5.286C24.61-7.66 0 4.646 0 26.23z"/></svg></i>
         <span><b>Email</b><small>soni.gracia97@gmail.com</small></span>
       </button>
       <a class="mini" href="https://www.linkedin.com/in/soni-g-siahaan/" target="_blank" rel="noopener" aria-label="LinkedIn profile">
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <rect x="6" y="6" width="52" height="52" rx="12" fill="#0A66C2"/>
-          <rect x="16" y="27" width="7" height="21" rx="1.5" fill="#fff"/>
-          <circle cx="19.5" cy="19" r="4.2" fill="#fff"/>
-          <path d="M29 27h6.5v3c1.2-2.1 3.6-3.6 6.8-3.6 5 0 7.2 3.2 7.2 8.6V48h-7V37c0-2.9-1-4.6-3.4-4.6S36 34.3 36 37v11h-7z" fill="#fff"/>
-        </svg>
+        <i class="brand"><svg aria-hidden="true" viewBox="0 0 128 128"><path fill="#0076b2" d="M116 3H12a8.91 8.91 0 0 0-9 8.8v104.42a8.91 8.91 0 0 0 9 8.78h104a8.93 8.93 0 0 0 9-8.81V11.77A8.93 8.93 0 0 0 116 3"/><path fill="#fff" d="M21.06 48.73h18.11V107H21.06zm9.06-29a10.5 10.5 0 1 1-10.5 10.49a10.5 10.5 0 0 1 10.5-10.49m20.41 29h17.36v8h.24c2.42-4.58 8.32-9.41 17.13-9.41C103.6 47.28 107 59.35 107 75v32H88.89V78.65c0-6.75-.12-15.44-9.41-15.44s-10.87 7.36-10.87 15V107H50.53z"/></svg></i>
         <span><b>LinkedIn</b><small>soni-g-siahaan</small></span>
       </a>
     </div>
 
     <!-- ABOUT: location + live clock -->
-    <article class="card map" data-cat="about" aria-label="Based in Jakarta">
+    <article class="card map" data-cat="about" data-home aria-label="Based in Jakarta">
       <canvas id="mapc"></canvas>
       <span class="pin"></span>
       <div class="meta">
@@ -531,17 +553,17 @@
     <article class="card h2 about-card toolcard" data-cat="about" data-home>
       <span class="label">Tools</span>
       <ul class="toolist">
-        <li><i style="background:#1E1E1E">F</i>Figma</li>
-        <li><i style="background:#4255FF">M</i>Miro</li>
-        <li><i style="background:#0C66E4">T</i>Trello</li>
-        <li><i style="background:#1A73E8">G</i>Google Workspace</li>
-        <li><i style="background:#C96442">C</i>Claude</li>
+        <li><i class="brand"><svg aria-hidden="true" viewBox="0 0 128 128"><path fill="#0acf83" d="M45.5 129c11.9 0 21.5-9.6 21.5-21.5V86H45.5C33.6 86 24 95.6 24 107.5S33.6 129 45.5 129m0 0"/><path fill="#a259ff" d="M24 64.5C24 52.6 33.6 43 45.5 43H67v43H45.5C33.6 86 24 76.4 24 64.5m0 0"/><path fill="#f24e1e" d="M24 21.5C24 9.6 33.6 0 45.5 0H67v43H45.5C33.6 43 24 33.4 24 21.5m0 0"/><path fill="#ff7262" d="M67 0h21.5C100.4 0 110 9.6 110 21.5S100.4 43 88.5 43H67zm0 0"/><path fill="#1abcfe" d="M110 64.5c0 11.9-9.6 21.5-21.5 21.5S67 76.4 67 64.5S76.6 43 88.5 43S110 52.6 110 64.5m0 0"/></svg></i>Figma</li>
+        <li><i class="brand"><svg aria-hidden="true" viewBox="0 0 256 256"><path fill="#fd3" d="M0 64C0 28.654 28.654 0 64 0h128c35.346 0 64 28.654 64 64v128c0 35.346-28.654 64-64 64H64c-35.346 0-64-28.654-64-64z"/><path d="M170.195 48.8h-23.239l19.366 34.026L123.717 48.8h-23.239l21.303 41.588L77.239 48.8H54l23.239 52.937L54 207.6h23.239l44.542-113.426L100.478 207.6h23.239l42.605-120.988L146.956 207.6h23.239L212.8 75.263z"/></svg></i>Miro</li>
+        <li><i class="brand"><svg aria-hidden="true" viewBox="0 0 128 128"><defs><linearGradient id="SVGIbGPWdSe" x1="128" x2="128" y1="0" y2="256" gradientTransform="scale(.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2684ff"/><stop offset="1" stop-color="#0052cc"/></linearGradient></defs><path fill="url(#SVGIbGPWdSe)" d="M12.5 0h103c6.925 0 12.5 5.575 12.5 12.5v103c0 6.925-5.575 12.5-12.5 12.5h-103C5.575 128 0 122.425 0 115.5v-103C0 5.575 5.575 0 12.5 0"/><path fill="#fff" d="M78.32 16.64h27.04c3.324 0 6 2.676 6 6v44c0 3.324-2.676 6-6 6H78.32c-3.324 0-6-2.676-6-6v-44c0-3.324 2.676-6 6-6m-55.68 0h27.04c3.324 0 6 2.676 6 6v76c0 3.324-2.676 6-6 6H22.64c-3.324 0-6-2.676-6-6v-76c0-3.324 2.676-6 6-6"/></svg></i>Trello</li>
+        <li><i class="brand"><svg aria-hidden="true" viewBox="0 0 192 192"><path fill="#fbbc04" d="M67.446 5.69c4.386-.21 8.731-.493 13.095-.99c19.997-2.203 35.323.594 51.56 13.092c17.231 14.262 29.603 29.472 31.778 52.462c1.02 13.196.36 26.438-.499 39.622c-.46 7.246-.628 14.49-.79 21.748c-.266 11.276-.663 22.552-1.34 33.81l-.15 3.3c-.442 6.434-1.292 9.849-6.1 14.266c-2.385 1.193-3.865 1.136-6.528 1.154l-2.889.026l-3.18.013l-3.34.025c-3.662.025-7.324.04-10.985.055c-1.248.006-2.497.01-3.783.017c-5.247.02-10.493.04-15.74.05c-7.515.017-15.03.05-22.545.108c-5.923.043-11.846.059-17.77.065q-3.777.01-7.555.046a955 955 0 0 1-10.57.025l-3.156.049c-4.604-.04-7.916-.082-11.59-3.044c-3.538-3.867-3.499-5.77-3.523-10.94l-.013-1.996q-.019-3.329-.026-6.656l-.025-4.76c-.026-5.22-.04-10.44-.056-15.66l-.016-5.387c-.02-7.47-.04-14.94-.05-22.41c-.018-10.71-.05-21.42-.108-32.13a5152 5152 0 0 1-.063-22.583c-.004-4.498-.016-8.995-.048-13.492q-.044-6.348-.025-12.696q0-2.328-.026-4.656c-.14-13.192-.14-13.192 3.021-17.13c7.95-6.427 23.091-4.942 33.035-5.403"/><path fill="#4285f4" d="M116 52h44c.113 16.194.205 32.388.259 48.583c.026 7.52.061 15.039.118 22.559q.076 9.832.093 19.664c.007 3.471.022 6.94.059 10.41c.04 3.876.041 7.752.039 11.628l.054 3.477c-.056 8.681-.056 8.681-3.032 12.376c-3.338 2.968-4.78 3.428-9.118 3.457l-2.889.026l-3.18.013l-3.341.025q-5.491.036-10.984.055l-3.783.017q-7.87.033-15.74.051q-11.272.023-22.544.107c-5.924.043-11.847.059-17.771.065q-3.777.01-7.554.046c-3.525.032-7.047.032-10.572.024l-3.155.05c-4.604-.039-7.916-.082-11.591-3.044C24.75 169.981 32 162.347 32 140h84z"/><path fill="#188038" d="M32 140h84v44c-18.976.201-18.976.201-27.078.244c-5.524.03-11.048.065-16.571.133c-4.455.055-8.909.084-13.364.097q-2.546.015-5.093.055c-2.382.036-4.762.041-7.144.039l-2.117.054C39.05 184.564 36.785 182.801 33 179c-5.816-11.631-1-25.996-1-39"/><path fill="#fff" d="M76 52h40v88H76z"/><path fill="#1967d2" d="M116 140h44l.312 18.125l.138 5.688q.023 2.254.038 4.507l.078 2.328c.003 4.097-.35 6.592-2.972 9.832c-4.17 4.051-7.325 3.654-12.883 3.618l-2.198-.003c-2.713-.006-5.425-.02-8.138-.033L116 184z"/><path fill="#34a853" d="M76 140h40v44H76z"/><path fill="#ea4335" d="M116 8c7.877 6.752 7.877 6.752 11.191 10.062l2.243 2.233l2.343 2.35l2.459 2.455q2.552 2.551 5.1 5.106q3.923 3.927 7.853 7.847l4.963 4.967l2.386 2.379a3258 3258 0 0 0 4.104 4.116C160 51 160 51 160 52h-44z"/></svg></i>Google Workspace</li>
+        <li><i class="brand"><svg aria-hidden="true" viewBox="0 0 128 128"><path fill="#d97757" d="m25.144 85.096l25.159-14.118l.421-1.23l-.421-.68h-1.23l-4.21-.26l-14.377-.388l-12.466-.518l-12.078-.648l-3.044-.648l-2.85-3.755l.292-1.879l2.558-1.716l3.659.324l8.095.55l12.143.842l8.807.519l13.05 1.36h2.072l.292-.842l-.713-.518l-.55-.519l-12.564-8.516l-13.6-9.002l-7.123-5.18l-3.853-2.623l-1.943-2.461l-.842-5.375l3.497-3.853l4.695.323l1.198.324l4.76 3.659l10.168 7.869l13.276 9.779l1.943 1.619l.777-.55l.097-.39l-.875-1.457l-7.22-13.049l-7.707-13.276l-3.432-5.504l-.907-3.304c-.323-1.36-.55-2.492-.55-3.885L33.53.712L35.73 0l5.311.713l2.235 1.942l3.302 7.545l5.343 11.884l8.29 16.158l2.428 4.792l1.295 4.436l.486 1.36h.842v-.777l.68-9.099l1.263-11.172l1.23-14.377l.421-4.047L70.864 4.5l3.983-2.623l3.109 1.49l2.558 3.658l-.356 2.364l-1.522 9.876l-2.979 15.478l-1.943 10.362h1.133l1.296-1.295l5.245-6.962l8.808-11.01l3.886-4.37l4.533-4.825l2.914-2.3h5.505l4.047 6.023l-1.813 6.218l-5.666 7.188l-4.696 6.087l-6.735 9.067l-4.21 7.253l.39.583l1.003-.097l15.219-3.238l8.224-1.49l9.811-1.683l4.437 2.072l.485 2.105l-1.748 4.306l-10.491 2.59l-12.305 2.461l-18.328 4.34l-.226.162l.259.323l8.257.778l3.53.194h8.645l16.093 1.198l4.21 2.784l2.525 3.4l-.421 2.59l-6.476 3.304l-8.743-2.073l-20.4-4.857l-6.993-1.749h-.972v.583l5.829 5.7l10.685 9.649l13.373 12.434l.68 3.076l-1.716 2.429l-1.813-.26l-11.754-8.84l-4.534-3.982l-10.264-8.646h-.68v.907l2.364 3.465l12.499 18.78l.647 5.764l-.906 1.878l-3.238 1.133l-3.562-.647l-7.318-10.265l-7.545-11.56l-6.087-10.361l-.745.421l-3.595 38.694l-1.683 1.975l-3.886 1.49l-3.238-2.46l-1.716-3.984l1.716-7.868l2.072-10.265l1.684-8.16l1.522-10.135l.906-3.368l-.064-.226l-.745.097l-7.642 10.492l-11.624 15.704l-9.197 9.843l-2.201.875l-3.82-1.976l.355-3.53l2.137-3.14l12.726-16.19l7.674-10.038l4.954-5.796l-.033-.842h-.29L22.066 98.987l-6.023.777l-2.59-2.429l.324-3.982l1.23-1.296l10.168-6.994Z"/></svg></i>Claude</li>
       </ul>
     </article>
 
     <!-- SIDE: Upwork freelance profile -->
     <a class="card w2 upwork" data-cat="side" href="https://www.upwork.com/freelancers/~0187aaee31c2ebb91d" target="_blank" rel="noopener" aria-label="Soni Gracia on Upwork">
-      <div class="head"><span class="label">Freelance · Upwork</span><span class="avail"><i></i>Available for freelance</span></div>
+      <div class="head"><span class="label brand-label"><i class="brand"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="#6fda44" d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076l.008-.042c.207-1.143.849-3.06 2.839-3.06a2.705 2.705 0 0 1 2.703 2.703a2.707 2.707 0 0 1-2.704 2.702m0-8.14c-2.539 0-4.51 1.649-5.31 4.366c-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112a2.55 2.55 0 0 1-2.547 2.548a2.55 2.55 0 0 1-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303c2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109c3 0 5.439-2.452 5.439-5.45c0-3-2.439-5.439-5.439-5.439"/></svg></i>Freelance · Upwork</span><span class="avail"><i></i>Available for freelance</span></div>
       <h3>UI/UX Designer · Design System, Figma, Whimsical, Miro</h3>
       <div class="stats4">
         <div><b class="g">100%</b><small>Job Success</small></div>
@@ -550,6 +572,13 @@
         <div><b>121</b><small>Hours</small></div>
       </div>
       <div class="svc"><span>UI/UX Design</span><span>Design System</span><span>Figma</span></div>
+      <span class="corner" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12L12 4M6 4h6v6"/></svg></span>
+    </a>
+
+    <!-- SIDE: Medium writing -->
+    <a class="card w2 medium" data-cat="side" href="https://medium.com/@uiux-sgracia" target="_blank" rel="noopener" aria-label="Soni Gracia on Medium">
+      <span class="label brand-label"><i class="brand"><svg aria-hidden="true" viewBox="0 0 16 16"><path fill="#000" d="M9.025 8c0 2.485-2.02 4.5-4.513 4.5A4.506 4.506 0 0 1 0 8c0-2.486 2.02-4.5 4.512-4.5A4.506 4.506 0 0 1 9.025 8m4.95 0c0 2.34-1.01 4.236-2.256 4.236S9.463 10.339 9.463 8c0-2.34 1.01-4.236 2.256-4.236S13.975 5.661 13.975 8M16 8c0 2.096-.355 3.795-.794 3.795c-.438 0-.793-1.7-.793-3.795c0-2.096.355-3.795.794-3.795c.438 0 .793 1.699.793 3.795"/></svg></i>Writing · Medium</span>
+      <div><b>Medium</b><small>@uiux-sgracia · Notes on UI/UX design</small></div>
       <span class="corner" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12L12 4M6 4h6v6"/></svg></span>
     </a>
 
@@ -583,11 +612,11 @@
 
   /* ---------- Theme ---------- */
   const root = document.documentElement;
-  // The button cycles Light -> Dark -> Colorful and shows the current mode
+  // The button cycles Light -> Colorful -> Dark and shows the current mode
   const MODES = {
-    light:    { label: 'Light',    next: 'dark',     icon: '<circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/>' },
-    dark:     { label: 'Dark',     next: 'colorful', icon: '<path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/>' },
-    colorful: { label: 'Colorful', next: 'light',    icon: '<path d="M8 1.5a6.5 6.5 0 1 0 0 13c1 0 1.5-.6 1.5-1.4 0-.9-.8-1.3-.8-2.1 0-.8.6-1.3 1.4-1.3h1.6a2.8 2.8 0 0 0 2.8-2.8C14.5 3.9 11.6 1.5 8 1.5z"/><circle cx="4.8" cy="7" r=".9"/><circle cx="7.2" cy="4.4" r=".9"/><circle cx="10.4" cy="5" r=".9"/>' }
+    light:    { label: 'Light',    next: 'colorful',     icon: '<circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/>' },
+    dark:     { label: 'Dark',     next: 'light', icon: '<path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/>' },
+    colorful: { label: 'Colorful', next: 'dark',    icon: '<path d="M8 1.5a6.5 6.5 0 1 0 0 13c1 0 1.5-.6 1.5-1.4 0-.9-.8-1.3-.8-2.1 0-.8.6-1.3 1.4-1.3h1.6a2.8 2.8 0 0 0 2.8-2.8C14.5 3.9 11.6 1.5 8 1.5z"/><circle cx="4.8" cy="7" r=".9"/><circle cx="7.2" cy="4.4" r=".9"/><circle cx="10.4" cy="5" r=".9"/>' }
   };
   const mode = () => MODES[root.dataset.theme] ? root.dataset.theme : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   const paintThemeBtn = () => {
@@ -598,7 +627,7 @@
     drawMap();
   };
   const saved = store.get('theme');
-  if (saved) root.dataset.theme = saved;
+  root.dataset.theme = MODES[saved] ? saved : 'light';  // Light is the default for first-time visitors
   $('#theme').addEventListener('click', () => {
     root.dataset.theme = MODES[mode()].next;
     store.set('theme', root.dataset.theme);
@@ -672,7 +701,7 @@
     toTop();
   });
 
-  /* ---------- Greeting avatar: flips through photos while hovered ---------- */
+  /* ---------- Greeting avatar: shows the illustration, flips to the photo and back while hovered ---------- */
   {
     const intro = $('.intro'), av = $('#avatar'), img = $('#avatar-img');
     const faces = [
@@ -680,11 +709,8 @@
       { src: 'about-avatar-photo.jpg', alt: 'Photo of Soni Gracia' }
     ];
     faces.forEach(f => { const p = new Image(); p.src = f.src; });   // preload
-    let i = -1, timer = null, busy = false, pending = null;
-    const show = k => {                       // k = -1 shows the SG monogram
-      if (k < 0) { img.hidden = true; img.alt = ''; }
-      else { img.src = faces[k].src; img.alt = faces[k].alt; img.hidden = false; }
-    };
+    let i = 0, timer = null, busy = false, pending = null;
+    const show = k => { img.src = faces[k].src; img.alt = faces[k].alt; };
     const flipTo = async k => {
       if (busy) { pending = k; return; } busy = true;
       if (reduce) { show(k); busy = false; return; }
@@ -696,7 +722,7 @@
     };
     const next = () => { i = (i + 1) % faces.length; flipTo(i); };
     intro.addEventListener('pointerenter', () => { if (timer) return; next(); timer = setInterval(next, 1100); });
-    intro.addEventListener('pointerleave', () => { clearInterval(timer); timer = null; i = -1; flipTo(-1); });
+    intro.addEventListener('pointerleave', () => { clearInterval(timer); timer = null; if (i !== 0) { i = 0; flipTo(0); } });
   }
 
   /* ---------- Copy email ---------- */

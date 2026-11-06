@@ -426,7 +426,7 @@
     // Autoplay (muted) unless the visitor prefers reduced motion
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) v.play().catch(paint);
   })();
-  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+  try { const t = localStorage.getItem('theme'); document.documentElement.dataset.theme = t || 'light'; } catch {}
 </script>
 </body>
 </html>
