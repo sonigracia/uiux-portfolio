@@ -137,7 +137,8 @@
     --cell: clamp(150px, 19vw, 250px);
     display: grid; grid-template-columns: repeat(4, 1fr);
     --gap: 22px;
-    grid-auto-rows: minmax(var(--cell), auto); grid-auto-flow: dense; gap: var(--gap);
+    --row: calc(var(--cell) * .7);   /* rows are shorter than columns are wide; cards grow only as their content needs */
+    grid-auto-rows: minmax(var(--row), auto); grid-auto-flow: dense; gap: var(--gap);
     max-width: calc(var(--cell) * 4 + 66px); margin: 0 auto;
   }
   .card {
@@ -148,8 +149,10 @@
     animation-delay: calc(var(--i, 0) * 55ms);
   }
   .card:hover { transform: translateY(-4px) scale(1.01); }
-  .card.dim { opacity: .28; filter: grayscale(1) blur(.5px); }
-  .card.dim:hover { transform: none; }
+  .grid > [hidden] { display: none !important; }
+  /* Home tab: Email/LinkedIn, Skills and Tools widen to fill the gaps left by hidden cards */
+  .grid[data-filter="home"] :is(.stack, .skills, .toolcard) { grid-column: span 2; grid-row: auto; }
+  .grid[data-filter="home"] .toolist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .w2 { grid-column: span 2; }
   .h2 { grid-row: span 2; }
   .w4 { grid-column: 1 / -1; }
@@ -299,6 +302,75 @@
 
   footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 48px; }
 
+  /* ---------- Colorful mode: vibrant cards on cream, drifting color wash behind ---------- */
+  :root[data-theme="colorful"] {
+    color-scheme: light;
+    --ground: #FBF0DC;
+    --card: #FFF6E6;
+    --card-2: #FFFFFF;
+    --ink: #3D0B0B;
+    --muted: #7A5A50;
+    --line: #EAD9C4;
+    --up: #1E8F4E;
+    --down: #E2412A;
+    --accent: #2F6BFF;
+    --shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 12px 30px -18px rgba(61,11,11,.45);
+  }
+  :root[data-theme="colorful"] body::before,
+  :root[data-theme="colorful"] body::after {
+    content: ""; position: fixed; inset: -25vmax; z-index: -1; pointer-events: none;
+    filter: blur(50px); will-change: transform;
+  }
+  :root[data-theme="colorful"] body::before {
+    background:
+      radial-gradient(32vmax 32vmax at 18% 22%, rgb(255 193 46 / .75), transparent 70%),
+      radial-gradient(30vmax 30vmax at 82% 18%, rgb(247 166 207 / .75), transparent 70%),
+      radial-gradient(34vmax 34vmax at 72% 78%, rgb(47 123 255 / .45), transparent 70%),
+      radial-gradient(30vmax 30vmax at 22% 80%, rgb(201 230 42 / .6), transparent 70%);
+    animation: wash-a 22s ease-in-out infinite alternate;
+  }
+  :root[data-theme="colorful"] body::after {
+    background:
+      radial-gradient(30vmax 30vmax at 75% 30%, rgb(255 91 31 / .5), transparent 70%),
+      radial-gradient(34vmax 34vmax at 30% 55%, rgb(201 162 242 / .65), transparent 70%),
+      radial-gradient(28vmax 28vmax at 60% 90%, rgb(255 193 46 / .55), transparent 70%);
+    animation: wash-b 17s ease-in-out infinite alternate;
+  }
+  @keyframes wash-a {
+    50%  { transform: translate(5vmax, -4vmax) rotate(10deg) scale(1.08); }
+    100% { transform: translate(-4vmax, 5vmax) rotate(-8deg) scale(1); }
+  }
+  @keyframes wash-b {
+    0%   { opacity: .2; transform: translate(-3vmax, 3vmax) rotate(0); }
+    50%  { opacity: 1; }
+    100% { opacity: .35; transform: translate(4vmax, -4vmax) rotate(14deg) scale(1.1); }
+  }
+  :root[data-theme="colorful"] .top:not(.docked) { background: none; }
+  :root[data-theme="colorful"] .logo span { color: #FF5B1F; }
+  :root[data-theme="colorful"] .pill { background: var(--ink); }
+  :root[data-theme="colorful"] .filters button[aria-pressed="true"] { color: var(--card); }
+  :root[data-theme="colorful"] :is(.card:not(.project), .mini) { color: var(--ink); }
+
+  /* Each card gets its own swatch; light text on the deep ones */
+  :root[data-theme="colorful"] :is(#mail, .profile, .toolcard, .now) {
+    --ink: #FFF6E6; --muted: rgb(255 246 230 / .72); --line: rgb(255 246 230 / .22); --card-2: #FFF6E6;
+  }
+  :root[data-theme="colorful"] :is(.intro, .mini[href*="linkedin"], .map, .edu, .lang, .exp, .skills, .upwork) {
+    --muted: rgb(61 11 11 / .7); --line: rgb(61 11 11 / .16); --card-2: #FFF6E6; --accent: #3D0B0B;
+  }
+  :root[data-theme="colorful"] .intro { --card: #FFC12E; }
+  :root[data-theme="colorful"] #mail { --card: #1F5FE0; --accent: #FF5B1F; }
+  :root[data-theme="colorful"] .mini[href*="linkedin"] { --card: #F7A6CF; }
+  :root[data-theme="colorful"] .map { --card: #C9E62A; --accent: #1F5FE0; --line: rgb(61 11 11 / .22); }
+  :root[data-theme="colorful"] .profile { --card: #4D0B0B; --accent: #FFC12E; }
+  :root[data-theme="colorful"] .edu { --card: #FF5B1F; --muted: rgb(43 6 6 / .75); --ink: #2B0606; }
+  :root[data-theme="colorful"] .lang { --card: #C9A2F2; }
+  :root[data-theme="colorful"] .exp { --card: #D8C9BD; }
+  :root[data-theme="colorful"] .skills { --card: #FFC12E; }
+  :root[data-theme="colorful"] .toolcard { --card: #4A2632; }
+  :root[data-theme="colorful"] .upwork { --card: #C9E62A; --upw: #1F6B00; }
+  :root[data-theme="colorful"] .now { --card: #1F5FE0; }
+
   /* ---------- Responsive ---------- */
   @media (max-width: 860px) {
     .top { grid-template-columns: auto 1fr; row-gap: 12px; }
@@ -308,7 +380,6 @@
     .mini { padding: 0 12px; gap: 10px; }
     .mini svg { width: 28px; height: 28px; }
     .w2, .intro, .now { grid-column: span 2; }
-    .upwork, .now { grid-row: span 2; }
     .upwork h3 { display: block; }
     .intro { flex-direction: column; text-align: center; justify-content: center; padding: 22px; gap: 16px; }
     .avatar { width: 96px; }
@@ -342,7 +413,7 @@
   <div class="nav-mid">
     <nav class="filters" id="filters" aria-label="Filter cards">
       <span class="pill" id="pill"></span>
-      <button id="f-all" data-f="all" aria-pressed="true">All</button>
+      <button id="f-home" data-f="home" aria-pressed="true">Home</button>
       <button id="f-about" data-f="about" aria-pressed="false">About</button>
       <button id="f-work" data-f="work" aria-pressed="false">Work</button>
       <button id="f-side" data-f="side" aria-pressed="false">Side Quests</button>
@@ -350,8 +421,8 @@
   </div>
 
   <div class="tools">
-    <button class="chip" id="theme" aria-pressed="false">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>
+    <button class="chip" id="theme" aria-label="Theme">
+      <svg id="theme-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>
       <span class="txt" id="theme-txt">Light</span>
     </button>
   </div>
@@ -362,7 +433,7 @@
   <section class="grid" id="grid">
 
     <!-- ABOUT: intro -->
-    <article class="card w2 intro" data-cat="about">
+    <article class="card w2 intro" data-cat="about" data-home>
       <div class="avatar" id="avatar"><b>SG</b><img id="avatar-img" alt="" hidden></div>
       <p>Heyyy <span class="wave">👋</span><br>
         I'm <strong>Soni Gracia</strong>, a UI/UX Designer
@@ -370,7 +441,7 @@
     </article>
 
     <!-- ABOUT: contact (email + LinkedIn share one cell) -->
-    <div class="card stack" data-cat="about">
+    <div class="card stack" data-cat="about" data-home>
       <button class="mini" id="mail" aria-label="Copy email address soni.gracia97@gmail.com">
         <span class="toast" id="toast">Copied</span>
         <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -424,7 +495,7 @@
     </article>
 
     <!-- WORK: POEMS Cash Withdrawal case study -->
-    <a class="card w2 h2 project cashwd" data-cat="work" href="cash-withdrawal.html">
+    <a class="card w2 h2 project cashwd" data-cat="work" data-home href="cash-withdrawal.html">
       <img src="cw-cover.jpg" alt="" loading="lazy">
       <div class="tag"><span class="label">Case study · POEMS Mobile</span><h3>Cash withdrawal, made instant</h3></div>
       <div class="chips"><span>Instant withdrawal</span><span>UX audit</span><span>Benchmarking</span><span>UI Design</span></div>
@@ -432,7 +503,7 @@
     </a>
 
     <!-- WORK: POEMS Autosweep case study -->
-    <a class="card w2 h2 project autosweep" data-cat="work" href="autosweep.html">
+    <a class="card w2 h2 project autosweep" data-cat="work" data-home href="autosweep.html">
       <img src="as-card.jpg" alt="" loading="lazy">
       <div class="tag"><span class="label">Case study · POEMS Mobile</span><h3>Autosweep, redesigned for activation</h3></div>
       <div class="chips"><span>Mutual funds</span><span>UX audit</span><span>UI Design</span></div>
@@ -451,13 +522,13 @@
     </article>
 
     <!-- ABOUT: skills -->
-    <article class="card h2 about-card skills" data-cat="about">
+    <article class="card h2 about-card skills" data-cat="about" data-home>
       <span class="label">Skills</span>
       <div class="tags"><span>User Research</span><span>Product Thinking</span><span>Interactive Prototype</span><span>Benchmarking</span><span>UI/UX Audits</span><span>Design System</span></div>
     </article>
 
     <!-- ABOUT: tools -->
-    <article class="card h2 about-card toolcard" data-cat="about">
+    <article class="card h2 about-card toolcard" data-cat="about" data-home>
       <span class="label">Tools</span>
       <ul class="toolist">
         <li><i style="background:#1E1E1E">F</i>Figma</li>
@@ -512,12 +583,24 @@
 
   /* ---------- Theme ---------- */
   const root = document.documentElement;
-  const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-  const paintThemeBtn = () => { $('#theme-txt').textContent = isDark() ? 'Dark' : 'Light'; $('#theme').setAttribute('aria-pressed', isDark()); drawMap(); };
+  // The button cycles Light -> Dark -> Colorful and shows the current mode
+  const MODES = {
+    light:    { label: 'Light',    next: 'dark',     icon: '<circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/>' },
+    dark:     { label: 'Dark',     next: 'colorful', icon: '<path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/>' },
+    colorful: { label: 'Colorful', next: 'light',    icon: '<path d="M8 1.5a6.5 6.5 0 1 0 0 13c1 0 1.5-.6 1.5-1.4 0-.9-.8-1.3-.8-2.1 0-.8.6-1.3 1.4-1.3h1.6a2.8 2.8 0 0 0 2.8-2.8C14.5 3.9 11.6 1.5 8 1.5z"/><circle cx="4.8" cy="7" r=".9"/><circle cx="7.2" cy="4.4" r=".9"/><circle cx="10.4" cy="5" r=".9"/>' }
+  };
+  const mode = () => MODES[root.dataset.theme] ? root.dataset.theme : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const paintThemeBtn = () => {
+    const m = MODES[mode()];
+    $('#theme-txt').textContent = m.label;
+    $('#theme-ico').innerHTML = m.icon;
+    $('#theme').setAttribute('aria-label', `Theme: ${m.label}. Switch to ${MODES[m.next].label}`);
+    drawMap();
+  };
   const saved = store.get('theme');
   if (saved) root.dataset.theme = saved;
   $('#theme').addEventListener('click', () => {
-    root.dataset.theme = isDark() ? 'light' : 'dark';
+    root.dataset.theme = MODES[mode()].next;
     store.set('theme', root.dataset.theme);
     paintThemeBtn();
   });
@@ -532,15 +615,21 @@
   const grid = $('#grid'), pill = $('#pill');
   const original = $$('.card', grid);
   const movePill = btn => { pill.style.width = btn.offsetWidth + 'px'; pill.style.transform = `translateX(${btn.offsetLeft}px)`; };
-  const applyFilter = f => {
+  // Each tab shows only its own cards: Home picks [data-home], the others match data-cat
+  const applyFilter = (f, animate = true) => {
     const first = new Map(original.map(c => [c, c.getBoundingClientRect()]));
-    const match = c => f === 'all' || c.dataset.cat === f;
-    [...original.filter(match), ...original.filter(c => !match(c))].forEach(c => grid.appendChild(c));
+    const match = c => f === 'home' ? 'home' in c.dataset : c.dataset.cat === f;
+    grid.dataset.filter = f;
+    original.forEach(c => { c.hidden = !match(c); });
+    if (!animate || reduce) return;
     original.forEach(c => {
-      c.classList.toggle('dim', !match(c));
+      if (c.hidden) return;
       c.style.animation = 'none';
-      if (reduce) return;
       const a = first.get(c), b = c.getBoundingClientRect();
+      if (!a.width) {   // was hidden: rise in
+        c.animate([{ opacity: 0, transform: 'translateY(18px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        return;
+      }
       const dx = a.left - b.left, dy = a.top - b.top;
       if (dx || dy) c.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.2,.8,.2,1)' });
     });
@@ -551,8 +640,10 @@
     if (e.isTrusted) toTop();   // new tab starts at the top; skip the restore-on-load click
   }));
   const startF = store.get('filter');
-  const startBtn = $(`#filters button[data-f="${startF}"]`) || $('#f-all');
-  requestAnimationFrame(() => { movePill(startBtn); if (startBtn.dataset.f !== 'all') startBtn.click(); });
+  const startBtn = $(`#filters button[data-f="${startF}"]`) || $('#f-home');
+  $$('#filters button').forEach(x => x.setAttribute('aria-pressed', x === startBtn));
+  applyFilter(startBtn.dataset.f, false);   // before first paint, so hidden cards never flash
+  requestAnimationFrame(() => movePill(startBtn));
   addEventListener('resize', () => movePill($('#filters button[aria-pressed="true"]')));
   document.fonts?.ready.then(() => movePill($('#filters button[aria-pressed="true"]')));
 
@@ -631,7 +722,7 @@
     const r = c.getBoundingClientRect(), dpr = devicePixelRatio || 1;
     c.width = r.width * dpr; c.height = r.height * dpr;
     const g = c.getContext('2d'); g.scale(dpr, dpr);
-    const css = getComputedStyle(root);
+    const css = getComputedStyle(c);
     const W = r.width, H = r.height;
     g.fillStyle = css.getPropertyValue('--card').trim(); g.fillRect(0, 0, W, H);
     // river
