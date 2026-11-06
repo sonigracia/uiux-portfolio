@@ -29,7 +29,7 @@
     --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
+    :root:not([data-theme="light"]):not([data-theme="colorful"]) {
       color-scheme: dark;
       --ground: #111311;
       --card: #1A1D1A;
@@ -297,7 +297,7 @@
   .upwork .svc span { font: 600 12px/1 var(--body); padding: 6px 9px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--line); }
   .upwork .corner { background: var(--upw); color: #fff; }
   .upwork h3 { display: none; margin: 0; font: 700 22px/1.15 var(--display); letter-spacing: -.02em; text-wrap: balance; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .upwork { --upw: #3CCB4A; } }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]):not([data-theme="colorful"]) .upwork { --upw: #3CCB4A; } }
   :root[data-theme="dark"] .upwork { --upw: #3CCB4A; }
 
   /* Medium (side quest) */
