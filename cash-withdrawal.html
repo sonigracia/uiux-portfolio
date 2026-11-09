@@ -104,6 +104,7 @@
   :root[data-theme="colorful"] .issues li b::before { color: #6E1622; }
   :root[data-theme="colorful"] .tools span { background: #F8B8D6; }
   :root[data-theme="colorful"] .next { background: #2E6B3F; color: #FFF8EC; --muted: rgb(255 248 236 / .78); }
+  :root[data-theme="colorful"] .next .eyebrow { color: rgb(255 248 236 / .85); }
   :root[data-theme="colorful"] .next .arrow { background: #FFD21F; color: #2A0F12; }
   :root[data-theme="colorful"] .hmw small { color: #FFD21F; }
   :root[data-theme="colorful"] .logo span { color: #E8501F; }
@@ -296,13 +297,12 @@
   <div class="hero">
     <div>
       <span class="eyebrow">Case study · POEMS Mobile</span>
-      <h1>Cash withdrawal you can <em>trust the timing of</em></h1>
+      <h1>Enhance User Experience in POEMS Mobile App <em>for Cash Withdrawal</em></h1>
     </div>
-    <p class="lede">Redesigning how POEMS users move money from their investment account (RDI) to their bank, adding instant withdrawal and making every step's status clear.</p>
     <div class="meta">
       <div><small>Category</small><b>Mobile Design</b></div>
       <div><small>My role</small><b>UI Design</b></div>
-      <div><small>Timeline</small><b>2 weeks design, plus dev handoff support</b></div>
+      <div><small>Timeline</small><b>2 weeks designing</b></div>
       <div><small>Method</small><b>Nielsen Norman heuristic audit</b></div>
     </div>
     <div class="cover video">
@@ -313,18 +313,17 @@
 
   <!-- Overview -->
   <section class="block" id="overview">
-    <header><span class="eyebrow">01 · Overview</span><h2>Where the money goes</h2></header>
+    <header><span class="eyebrow">01 · Overview</span><h2>Current Flow</h2></header>
     <div class="body">
-      <p>Cash withdrawal lets a user move funds from their RDI (investment account) to their personal bank account. Before the redesign, when the money arrived depended on what time the request was made.</p>
+      <p>Cash withdrawal lets a user move funds from their RDI (investment account) to their personal bank account.</p>
       <div class="facts">
         <div class="fact">
           <div class="big">&lt; Rp10,000,000</div>
           <p>The size of most withdrawal requests. These are small, low-risk transactions.</p>
         </div>
         <div class="fact">
-          <div class="big">10:00 WIB</div>
-          <p>The cutoff. Requests before it settle the same day. Requests after it settle the next day or the day after.</p>
-          <div class="cutoff" aria-hidden="true"><span class="on">T+0</span><span>T+1</span><span>T+2</span></div>
+          <div class="big">Cutoff Time</div>
+          <p>Withdrawal requests submitted before 10:00 AM are processed the same day. Requests submitted after 10:00 AM are processed within the next two days.</p>
         </div>
       </div>
       <figure>
@@ -336,7 +335,7 @@
 
   <!-- Problem -->
   <section class="block" id="problem">
-    <header><span class="eyebrow">02 · Problem</span><h2>Users couldn't tell when their money would arrive</h2></header>
+    <header><span class="eyebrow">02 · Problem</span><h2>Problem Statement</h2></header>
     <div class="body">
       <blockquote class="hmw">
         <small>How might we</small>
@@ -345,7 +344,7 @@
       <h3>Goals</h3>
       <ul class="goals">
         <li><b>G1</b>Make same-day and instant cash withdrawal possible.</li>
-        <li><b>G2</b>Give the withdrawal screens clear information about each request's status.</li>
+        <li><b>G2</b>Enhance cash withdrawal interfaces that provides clear information regarding users withdrawal status</li>
       </ul>
       <h3>Tools</h3>
       <div class="tools"><span>Figma: design drafts</span><span>Figma Make: interactive prototype</span><span>ChatGPT &amp; Claude: design review and UX writing</span></div>
